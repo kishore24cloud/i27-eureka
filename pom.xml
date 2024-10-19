@@ -9,7 +9,7 @@
 		<relativePath/> <!-- lookup parent from repository -->
 	</parent>
 	<groupId>com.lerner</groupId>
-	<artifactId>learner-eureka</artifactId>
+	<artifactId>i27-eureka</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
 	<name>lerner-eureka</name>
 	<description>Demo project for Spring Boot</description>
