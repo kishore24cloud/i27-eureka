@@ -10,6 +10,8 @@ pipeline {
     }
     environment {
         APPLICATION_NAME = "eureka" 
+        SONAR_TOKEN = credentials('sonar_creds')
+        SONAR_URL = "http://34.55.191.104:9000 "
     }
     stages {
         stage ('Build') {
@@ -20,17 +22,23 @@ pipeline {
         }
         stage ('Sonar') {
             steps {
-                sh """
-                echo "Starting Sonar Scan"
-                mvn  sonar:sonar \
-                     -Dsonar.projectKey=i27-eureka \
-                     -Dsonar.host.url=http://34.55.191.104:9000 \
-                     -Dsonar.login=squ_3bb3697d56549a4ac332f75062914e055020d5cf
-                """
+                echo "Starting Sonar Scans"
+                withSonarQubeEnv('SonarQube'){ // The name u saved in system under manage jenkins
+                    sh """
+                    mvn  sonar:sonar \
+                        -Dsonar.projectKey=i27-eureka \
+                        -Dsonar.host.url=${env.SONAR_URL} \
+                        -Dsonar.login=${SONAR_TOKEN}
+                    """
+                }
+                timeout (time: 2, unit: 'MINUTES'){
+                    waitForQualityGate abortPipeline: true
+                }
 
             }
         }
     }
 }
 
+// https://docs.sonarsource.com/sonarqube/9.9/analyzing-source-code/scanners/jenkins-extension-sonarqube/#jenkins-pipeline
 
