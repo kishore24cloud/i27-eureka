@@ -54,7 +54,7 @@ pipeline {
                   echo "************************* Building Docker image*************************"
                   pwd
                   ls -la
-                  #docker build --no-cache -t ${env.DOCKER_HUB}/${env.APPLICATION_NAME}:${GIT_COMMIT} 
+                  docker build --no-cache --build-arg JAR_SOURCE=i27-${env.APPLICATION_NAME}-${env.POM_VERSION}.${env.POM_PACKAGING} -t ${env.DOCKER_HUB}/${env.APPLICATION_NAME}:${GIT_COMMIT} ./.cicd
                   # docker.io/i27devopsb4/eureka:
                   #docker build -t imagename:tag dockerfilepath
                 """
