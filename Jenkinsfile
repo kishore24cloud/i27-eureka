@@ -18,7 +18,7 @@ pipeline {
         POM_VERSION = readMavenPom().getVersion()
         POM_PACKAGING = readMavenPom().getPackaging()
         DOCKER_HUB = "docker.io/i27devopsb4"
-        ""
+        
     }
     stages {
         stage ('Build') {
