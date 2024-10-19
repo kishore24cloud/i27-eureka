@@ -20,11 +20,14 @@ pipeline {
         }
         stage ('Sonar') {
             steps {
+                sh """
                 echo "Starting Sonar Scan"
                 mvn  sonar:sonar \
-                -Dsonar.projectKey=i27-eureka \
-                -Dsonar.host.url=http://34.55.191.104:9000 \
-                -Dsonar.login=squ_3bb3697d56549a4ac332f75062914e055020d5cf
+                     -Dsonar.projectKey=i27-eureka \
+                     -Dsonar.host.url=http://34.55.191.104:9000 \
+                     -Dsonar.login=squ_3bb3697d56549a4ac332f75062914e055020d5cf
+                """
+
             }
         }
     }
