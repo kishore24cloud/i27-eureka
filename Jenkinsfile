@@ -66,8 +66,28 @@ pipeline {
 
             } 
         }
+        stage ('Deploy to Dev') {
+            steps {
+                echo "Deploying to Dev Server"
+                withCredentials([usernamePassword(credentialsId: 'maha_ssh_docker_server_creds', passwordVariable: 'PASSWORD', usernameVariable: 'USERNAME')]) {
+                    sshpass -p  '$PASSWORD' -v ssh -o StrictHostKeyChecking=no $USERNAME@$dev_ip \"hostname -i"
+                }
+
+            }
+        }
     }
 }
 
+withCredentials([usernameColonPassword(credentialsId: 'mylogin', variable: 'USERPASS')])
+
 // https://docs.sonarsource.com/sonarqube/9.9/analyzing-source-code/scanners/jenkins-extension-sonarqube/#jenkins-pipeline
 
+// sshpass -p password ssh -o StrictHostKeyChecking=no username@dockerserverip
+ 
+
+ //usernameVariable : String
+// Name of an environment variable to be set to the username during the build.
+// passwordVariable : String
+// Name of an environment variable to be set to the password during the build.
+// credentialsId : String
+// Credentials of an appropriate type to be set to the variable.
