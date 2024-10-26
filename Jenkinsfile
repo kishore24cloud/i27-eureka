@@ -68,134 +68,67 @@ pipeline {
         }
         stage ('Deploy to Dev') {
             steps {
-                echo "Deploying to Dev Server"
-                withCredentials([usernamePassword(credentialsId: 'maha_ssh_docker_server_creds', passwordVariable: 'PASSWORD', usernameVariable: 'USERNAME')]) {
-                    script {
-                        sh "sshpass -p '$PASSWORD' -v ssh -o StrictHostKeyChecking=no $USERNAME@$dev_ip \"docker pull ${env.DOCKER_HUB}/${env.APPLICATION_NAME}:${GIT_COMMIT}\""
-                        try {
-                            // Stop the Container
-                            sh "sshpass -p '$PASSWORD' -v ssh -o StrictHostKeyChecking=no $USERNAME@$dev_ip docker stop ${env.APPLICATION_NAME}-dev"
-                            // Remove the Container
-                            sh "sshpass -p '$PASSWORD' -v ssh -o StrictHostKeyChecking=no $USERNAME@$dev_ip docker rm ${env.APPLICATION_NAME}-dev"
-                        }
-                        catch(err) {
-                            echo "Error Caught: $err"
-                        }
-
-                        // Create the container
-                        sh "sshpass -p '$PASSWORD' -v ssh -o StrictHostKeyChecking=no $USERNAME@$dev_ip docker run -dit --name ${env.APPLICATION_NAME}-dev -p 5761:8761 ${env.DOCKER_HUB}/${env.APPLICATION_NAME}:${GIT_COMMIT}"
-                    }   
+                script {
+                    //envDeploy, hostPort, contPort)
+                    dockerDeploy('dev', '5761', '8761').call()
                 }
-                // create a container 
-                // docker container create imagename 
-                // docker run -dit --name containerName imageName 
-                // docker run -dit --name eureka-dev
-                // docker run -dit --name eureka-test
-                // docker run -dit --name eureka-stage
-                // docker run -dit --name eureka-prod
-                // docker run -dit --name ${env.APPLICATION_NAME}-dev -p 5761:8761 ${env.DOCKER_HUB}/${env.APPLICATION_NAME}:${GIT_COMMIT}
-
-
             }
         }
         stage ('Deploy to Test') {
             steps {
-                echo "Deploying to Test Server"
-                withCredentials([usernamePassword(credentialsId: 'maha_ssh_docker_server_creds', passwordVariable: 'PASSWORD', usernameVariable: 'USERNAME')]) {
-                    script {
-                        sh "sshpass -p '$PASSWORD' -v ssh -o StrictHostKeyChecking=no $USERNAME@$dev_ip \"docker pull ${env.DOCKER_HUB}/${env.APPLICATION_NAME}:${GIT_COMMIT}\""
-                        try {
-                            // Stop the Container
-                            sh "sshpass -p '$PASSWORD' -v ssh -o StrictHostKeyChecking=no $USERNAME@$dev_ip docker stop ${env.APPLICATION_NAME}-tst"
-                            // Remove the Container
-                            sh "sshpass -p '$PASSWORD' -v ssh -o StrictHostKeyChecking=no $USERNAME@$dev_ip docker rm ${env.APPLICATION_NAME}-tst"
-                        }
-                        catch(err) {
-                            echo "Error Caught: $err"
-                        }
-
-                        // Create the container
-                        sh "sshpass -p '$PASSWORD' -v ssh -o StrictHostKeyChecking=no $USERNAME@$dev_ip docker run -dit --name ${env.APPLICATION_NAME}-tst -p 6761:8761 ${env.DOCKER_HUB}/${env.APPLICATION_NAME}:${GIT_COMMIT}"
-                    }   
+                script {
+                    //envDeploy, hostPort, contPort)
+                    dockerDeploy('tst', '6761', '8761').call()
                 }
-                // create a container 
-                // docker container create imagename 
-                // docker run -dit --name containerName imageName 
-                // docker run -dit --name eureka-dev
-                // docker run -dit --name eureka-test
-                // docker run -dit --name eureka-stage
-                // docker run -dit --name eureka-prod
-                // docker run -dit --name ${env.APPLICATION_NAME}-dev -p 5761:8761 ${env.DOCKER_HUB}/${env.APPLICATION_NAME}:${GIT_COMMIT}
-
-
             }
         }
         stage ('Deploy to Stage') {
             steps {
-                echo "Deploying to Stage Server"
-                withCredentials([usernamePassword(credentialsId: 'maha_ssh_docker_server_creds', passwordVariable: 'PASSWORD', usernameVariable: 'USERNAME')]) {
-                    script {
-                        sh "sshpass -p '$PASSWORD' -v ssh -o StrictHostKeyChecking=no $USERNAME@$dev_ip \"docker pull ${env.DOCKER_HUB}/${env.APPLICATION_NAME}:${GIT_COMMIT}\""
-                        try {
-                            // Stop the Container
-                            sh "sshpass -p '$PASSWORD' -v ssh -o StrictHostKeyChecking=no $USERNAME@$dev_ip docker stop ${env.APPLICATION_NAME}-stg"
-                            // Remove the Container
-                            sh "sshpass -p '$PASSWORD' -v ssh -o StrictHostKeyChecking=no $USERNAME@$dev_ip docker rm ${env.APPLICATION_NAME}-stg"
-                        }
-                        catch(err) {
-                            echo "Error Caught: $err"
-                        }
-
-                        // Create the container
-                        sh "sshpass -p '$PASSWORD' -v ssh -o StrictHostKeyChecking=no $USERNAME@$dev_ip docker run -dit --name ${env.APPLICATION_NAME}-stg -p 7761:8761 ${env.DOCKER_HUB}/${env.APPLICATION_NAME}:${GIT_COMMIT}"
-                    }   
+                script {
+                    //envDeploy, hostPort, contPort)
+                    dockerDeploy('stg', '7761', '8761').call()
                 }
-                // create a container 
-                // docker container create imagename 
-                // docker run -dit --name containerName imageName 
-                // docker run -dit --name eureka-dev
-                // docker run -dit --name eureka-test
-                // docker run -dit --name eureka-stage
-                // docker run -dit --name eureka-prod
-                // docker run -dit --name ${env.APPLICATION_NAME}-dev -p 5761:8761 ${env.DOCKER_HUB}/${env.APPLICATION_NAME}:${GIT_COMMIT}
-
 
             }
         }
         stage ('Deploy to Prod') {
             steps {
-                echo "Deploying to Prod Server"
-                withCredentials([usernamePassword(credentialsId: 'maha_ssh_docker_server_creds', passwordVariable: 'PASSWORD', usernameVariable: 'USERNAME')]) {
-                    script {
-                        sh "sshpass -p '$PASSWORD' -v ssh -o StrictHostKeyChecking=no $USERNAME@$dev_ip \"docker pull ${env.DOCKER_HUB}/${env.APPLICATION_NAME}:${GIT_COMMIT}\""
-                        try {
-                            // Stop the Container
-                            sh "sshpass -p '$PASSWORD' -v ssh -o StrictHostKeyChecking=no $USERNAME@$dev_ip docker stop ${env.APPLICATION_NAME}-prd"
-                            // Remove the Container
-                            sh "sshpass -p '$PASSWORD' -v ssh -o StrictHostKeyChecking=no $USERNAME@$dev_ip docker rm ${env.APPLICATION_NAME}-prd"
-                        }
-                        catch(err) {
-                            echo "Error Caught: $err"
-                        }
-
-                        // Create the container
-                        sh "sshpass -p '$PASSWORD' -v ssh -o StrictHostKeyChecking=no $USERNAME@$dev_ip docker run -dit --name ${env.APPLICATION_NAME}-prd -p 8761:8761 ${env.DOCKER_HUB}/${env.APPLICATION_NAME}:${GIT_COMMIT}"
-                    }   
+                script {
+                    //envDeploy, hostPort, contPort)
+                    dockerDeploy('prd', '8761', '8761').call()
                 }
-                // create a container 
-                // docker container create imagename 
-                // docker run -dit --name containerName imageName 
-                // docker run -dit --name eureka-dev
-                // docker run -dit --name eureka-test
-                // docker run -dit --name eureka-stage
-                // docker run -dit --name eureka-prod
-                // docker run -dit --name ${env.APPLICATION_NAME}-dev -p 5761:8761 ${env.DOCKER_HUB}/${env.APPLICATION_NAME}:${GIT_COMMIT}
-
-
             }
         }
     }
 }
+
+
+
+def dockerDeploy(envDeploy, hostPort, contPort){
+    return {
+        echo "Deploying to $envDeploy Environmnet"
+            withCredentials([usernamePassword(credentialsId: 'maha_ssh_docker_server_creds', passwordVariable: 'PASSWORD', usernameVariable: 'USERNAME')]) {
+                script {
+                    sh "sshpass -p '$PASSWORD' -v ssh -o StrictHostKeyChecking=no $USERNAME@$dev_ip \"docker pull ${env.DOCKER_HUB}/${env.APPLICATION_NAME}:${GIT_COMMIT}\""
+                    try {
+                        // Stop the Container
+                        sh "sshpass -p '$PASSWORD' -v ssh -o StrictHostKeyChecking=no $USERNAME@$dev_ip docker stop ${env.APPLICATION_NAME}-$envDeploy"
+                        // Remove the Container
+                        sh "sshpass -p '$PASSWORD' -v ssh -o StrictHostKeyChecking=no $USERNAME@$dev_ip docker rm ${env.APPLICATION_NAME}-$envDeploy"
+                    }
+                    catch(err) {
+                        echo "Error Caught: $err"
+                    }
+
+                    // Create the container
+                    sh "sshpass -p '$PASSWORD' -v ssh -o StrictHostKeyChecking=no $USERNAME@$dev_ip docker run -dit --name ${env.APPLICATION_NAME}-$envDeploy -p $hostPort:$contPort ${env.DOCKER_HUB}/${env.APPLICATION_NAME}:${GIT_COMMIT}"
+                }   
+            }
+    }
+}
+
+
+
 
 // Eureka 
 // continer port" 8761
