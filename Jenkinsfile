@@ -4,6 +4,36 @@ pipeline {
     agent {
         label 'k8s-slave'
     }
+    parameters {
+        choice(name: 'scan',
+            choices: 'yes\nno'
+            description: 'This will scan your application'
+        )
+        choice(name: 'buildOnly',
+            choices: 'yes\nno'
+            description: 'This will Only Build your application'
+        )
+        choice(name: 'dockerPush',
+            choices: 'yes\nno'
+            description: 'This Will build dockerImage and Push'
+        )
+        choice(name: 'deployToDev',
+            choices: 'yes\nno'
+            description: 'This will Deploy the app to Dev env'
+        )
+        choice(name: 'deployToTest',
+            choices: 'yes\nno'
+            description: 'This will Deploy the app to Test env'
+        )
+        choice(name: 'deployToStage',
+            choices: 'yes\nno'
+            description: 'This will Deploy the app to Stage env'
+        )
+        choice(name: 'deployToProd',
+            choices: 'yes\nno'
+            description: 'This will Deploy the app to Prod env'
+        )
+    }
     tools {
         maven 'Maven-3.8.8'
         jdk 'JDK-17'
@@ -22,6 +52,14 @@ pipeline {
     }
     stages {
         stage ('Build') {
+            when {
+                anyOf {
+                    expression {
+                        params.dockerPush == 'yes'
+                        params.buildOnly == 'yes'
+                    }
+                }
+            }
             steps {
                 script {
                     buildApp().call()
@@ -29,6 +67,15 @@ pipeline {
             }
         }
         stage ('Sonar') {
+            when {
+                anyOf {
+                    expression {
+                        params.scan == 'yes'
+                        params.buildOnly == 'yes'
+                        params.dockerPush == 'yes'
+                    }
+                }
+            }
             steps {
                 echo "Starting Sonar Scans"
                 withSonarQubeEnv('SonarQube'){ // The name u saved in system under manage jenkins
@@ -46,6 +93,13 @@ pipeline {
             }
         }
         stage ('Docker Build and Push') {
+            when {
+                anyOf {
+                    expression {
+                        params.dockerPush == 'yes'
+                    }
+                }
+            }
             steps { 
                 script {
                     dockerBuildAndPush().call()
@@ -53,6 +107,11 @@ pipeline {
             } 
         }
         stage ('Deploy to Dev') {
+            when {
+                expression {
+                    params.deployToDev == 'yes'
+                }
+            }
             steps {
                 script {
                     //envDeploy, hostPort, contPort)
@@ -61,6 +120,11 @@ pipeline {
             }
         }
         stage ('Deploy to Test') {
+            when {
+                expression {
+                    params.deployToTest == 'yes'
+                }
+            }
             steps {
                 script {
                     //envDeploy, hostPort, contPort)
@@ -69,6 +133,11 @@ pipeline {
             }
         }
         stage ('Deploy to Stage') {
+            when {
+                expression {
+                    params.deployToStage == 'yes'
+                }
+            }
             steps {
                 script {
                     //envDeploy, hostPort, contPort)
@@ -78,6 +147,11 @@ pipeline {
             }
         }
         stage ('Deploy to Prod') {
+            when {
+                expression {
+                    params.deployToProd == 'yes'
+                }
+            }
             steps {
                 script {
                     //envDeploy, hostPort, contPort)
