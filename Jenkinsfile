@@ -5,7 +5,7 @@ pipeline {
         label 'k8s-slave'
     }
     parameters {
-        choice(name: 'scan',
+        choice(name: 'scanOnly',
             choices: 'no\nyes',
             description: 'This will scan your application'
         )
@@ -70,7 +70,7 @@ pipeline {
             when {
                 anyOf {
                     expression {
-                        params.scan == 'yes'
+                        params.scanOnly == 'yes'
                         params.buildOnly == 'yes'
                         params.dockerPush == 'yes'
                     }
