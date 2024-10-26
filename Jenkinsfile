@@ -70,7 +70,7 @@ pipeline {
             steps {
                 echo "Deploying to Dev Server"
                 withCredentials([usernamePassword(credentialsId: 'maha_ssh_docker_server_creds', passwordVariable: 'PASSWORD', usernameVariable: 'USERNAME')]) {
-                    sshpass -p  '$PASSWORD' -v ssh -o StrictHostKeyChecking=no $USERNAME@$dev_ip \"hostname -i"
+                    sh "sshpass -p '$PASSWORD' -v ssh -o StrictHostKeyChecking=no $USERNAME@$dev_ip \"hostname -i\""
                 }
 
             }
@@ -78,7 +78,7 @@ pipeline {
     }
 }
 
-withCredentials([usernameColonPassword(credentialsId: 'mylogin', variable: 'USERPASS')])
+//withCredentials([usernameColonPassword(credentialsId: 'mylogin', variable: 'USERPASS')])
 
 // https://docs.sonarsource.com/sonarqube/9.9/analyzing-source-code/scanners/jenkins-extension-sonarqube/#jenkins-pipeline
 
