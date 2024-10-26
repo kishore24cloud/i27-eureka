@@ -47,7 +47,9 @@ pipeline {
         }
         stage ('Docker Build and Push') {
             steps { 
-                dockerBuildAndPush().call()
+                script {
+                    dockerBuildAndPush().call()
+                }
             } 
         }
         stage ('Deploy to Dev') {
