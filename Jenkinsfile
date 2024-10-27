@@ -161,7 +161,6 @@ pipeline {
             }
         }
         stage ('Deploy to Prod') {
-            
             when {
                 allOf {
                     anyOf{
@@ -173,10 +172,9 @@ pipeline {
                         tag pattern: "v\\d{1,2}\\.\\d{1,2}\\.\\d{1,2}",  comparator: "REGEXP" //v1.2.3
                     }
                 }
-
             }
             steps {
-                timeout(time: 300, unit: 'SECONDS' ) // SECONDS, MINUTES,HOURS{
+                timeout(time: 300, unit: 'SECONDS' ) { // SECONDS, MINUTES,HOURS{
                     input message: "Deploying to ${env.APPLICATION_NAME} to production ??", ok: 'yes', submitter: 'hemasre'
                 }
                 script {
