@@ -118,6 +118,7 @@ pipeline {
             steps {
                 script {
                     //envDeploy, hostPort, contPort)
+                    imageValidation().call()
                     dockerDeploy('dev', '5761', '8761').call()
                 }
             }
@@ -131,6 +132,7 @@ pipeline {
             steps {
                 script {
                     //envDeploy, hostPort, contPort)
+                    imageValidation().call()
                     dockerDeploy('tst', '6761', '8761').call()
                 }
             }
@@ -144,6 +146,7 @@ pipeline {
             steps {
                 script {
                     //envDeploy, hostPort, contPort)
+                    imageValidation().call()
                     dockerDeploy('stg', '7761', '8761').call()
                 }
 
@@ -183,6 +186,21 @@ def dockerBuildAndPush(){
         echo "************************ Login to Docker Registry ************************"
         sh "docker login -u ${DOCKER_CREDS_USR} -p ${DOCKER_CREDS_PSW}"
         sh "docker push ${env.DOCKER_HUB}/${env.APPLICATION_NAME}:${GIT_COMMIT}"
+    }
+}
+
+def imageValidation() {
+    return {
+        println("Attemting to Pull the Docker Image")
+        try {
+            sh "docker pull ${env.DOCKER_HUB}/${env.APPLICATION_NAME}:${GIT_COMMIT}"
+            println("Image is Pulled Succesfully!!!!")
+        }
+        catch(Exception e) {
+            println("OOPS!, the docker image with this tag is not available,So Creating the Image")
+            buildApp().call()
+            dockerBuildAndPush().call()
+        }
     }
 }
 
