@@ -152,10 +152,7 @@ pipeline {
                         }
                     }
                     anyOf{
-                        expression {
-                            branch 'release/*'
-                            // other conditoin
-                        }
+                        branch 'release/*'
 
                     }
                 }
