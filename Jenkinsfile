@@ -140,12 +140,12 @@ pipeline {
         stage ('Deploy to Stage') {
             when {
                 allOf {
-                    // anyOf {
-                    //     expression {
-                    //         params.deployToStage == 'yes'
-                    //         // other condition
-                    //     }
-                    // }
+                    anyOf {
+                        expression {
+                            params.deployToStage == 'yes'
+                            // other condition
+                        }
+                    }
                     anyOf{
                         branch 'release/*'
                     }
@@ -161,12 +161,24 @@ pipeline {
             }
         }
         stage ('Deploy to Prod') {
+            
             when {
-                expression {
-                    params.deployToProd == 'yes'
+                allOf {
+                    anyOf{
+                        expression {
+                            params.deployToProd == 'yes'
+                        }
+                    }
+                    anyOf{
+                        tag pattern: "v\\d{1,2}\\.\\d{1,2}\\.\\d{1,2}",  comparator: "REGEXP" //v1.2.3
+                    }
                 }
+
             }
             steps {
+                timeout(time: 300, unit: 'SECONDS' ) // SECONDS, MINUTES,HOURS{
+                    input message: "Deploying to ${env.APPLICATION_NAME} to production ??", ok: 'yes', submitter: 'hemasre'
+                }
                 script {
                     //envDeploy, hostPort, contPort)
                     dockerDeploy('prd', '8761', '8761').call()
