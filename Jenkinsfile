@@ -138,22 +138,16 @@ pipeline {
             }
         }
         stage ('Deploy to Stage') {
-            // when {
-            //     expression {
-            //         params.deployToStage == 'yes'
-            //     }
-            // }
             when {
                 allOf {
-                    anyOf {
-                        expression {
-                            params.deployToStage == 'yes'
-                            // other condition
-                        }
-                    }
+                    // anyOf {
+                    //     expression {
+                    //         params.deployToStage == 'yes'
+                    //         // other condition
+                    //     }
+                    // }
                     anyOf{
                         branch 'release/*'
-
                     }
                 }
             }
