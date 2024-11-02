@@ -2,5 +2,9 @@
 
 @Library("com.i27academy.slb@master") _
 dockerPipeline(
-    appName: 'eureka'
+    appName: 'eureka',
+    hostPort: '5761',
+    contPort: '8761'
 )
+
+
