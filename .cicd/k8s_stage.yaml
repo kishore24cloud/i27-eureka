@@ -30,7 +30,7 @@ spec:
     - protocol: TCP
       port: 80
       targetPort: 8761
-  type: NodePort
+  type: ClusterIP
 
 ---
 
@@ -51,4 +51,3 @@ spec:
             name: i27-eureka-stage-svc
             port:
               number: 80
-              
