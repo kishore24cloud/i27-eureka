@@ -13,6 +13,8 @@ spec:
       labels:
         app: i27-eureka-stage
     spec:
+      imagePullSecrets:
+      - name: jfrog-docker-secret
       containers:
       - name: i27-eureka-stage
         image: DIT # Docker Image Tag, which will be replaces later by sharedlib
