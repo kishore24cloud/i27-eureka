@@ -1,6 +1,6 @@
 // Call the Shared Lib
 
 @Library("com.i27academy.slb@master") _
-jfrogPipeline(
+helmPipeline(
     appName: 'eureka'
 )
