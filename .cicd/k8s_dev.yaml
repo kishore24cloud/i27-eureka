@@ -9,6 +9,8 @@ spec:
     matchLabels:
       app: i27-eureka-dev
   template:
+    imagePullSecrets:
+      - name: jfrog-docker-secret
     metadata:
       labels:
         app: i27-eureka-dev
