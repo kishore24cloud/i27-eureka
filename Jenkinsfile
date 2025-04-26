@@ -19,5 +19,16 @@ pipeline {
                 //-DskipTests=true 
             }
         }
+        stage ('Unit Tests') {
+            steps {
+                echo "Performing Unit tests for ${env.APPLICATION_NAME} application"
+                sh "mvn test"
+            }
+            post {
+                always {
+                    junit 'target/surefire-reports/*.xml'
+                }
+            }
+        }
     }
 }
