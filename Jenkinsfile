@@ -8,6 +8,8 @@ pipeline {
         POM_VERSION = readMavenPom().getVersion()
         POM_PACKAGING = readMavenPom().getPackaging()
         //version+ packaging
+        DOCKER_HUB = "docker.io/dybkishore"
+        DOCKER_CREDS = credentials('kk_docker_creds')
     }
     tools {
         maven 'Maven-3.8.8'
@@ -43,5 +45,28 @@ pipeline {
                 echo "Custom Format: ${env.APPLICATION_NAME}-${currentBuild.number}-${BRANCH_NAME}.${env.POM_PACKAGING}"
             }
         }
+        stage ('Docker Build and Push') {
+            steps {
+                // doker build -t name: tag 
+                sh """
+                  ls -la
+                  cp ${workspace}/target/i27-${env.APPLICATION_NAME}-${env.POM_VERSION}.${env.POM_PACKAGING} ./.cicd
+                  ls -la ./.cicd
+                  echo "******************************** Build Docker Image ********************************"
+                  docker build --force-rm --no-cache --pull --rm=true --build-arg JAR_SOURCE=i27-${env.APPLICATION_NAME}-${env.POM_VERSION}.${env.POM_PACKAGING} -t ${env.DOCKER_HUB}/${env.APPLICATION_NAME}:${GIT_COMMIT} ./.cicd
+                  docker images
+                  echo "******************************** Login to Docker Repo ********************************"
+                  docker login -u ${DOCKER_CREDS_USR} -p ${DOCKER_CREDS_PSW}
+                  echo "******************************** Docker Push ********************************"
+                  docker push ${env.DOCKER_HUB}/${env.APPLICATION_NAME}:${GIT_COMMIT}
+                """
+            }
+        }
     }
 }
+
+// cp /home/i27k8s10/jenkins/workspace/i27-Eureka_master/target/i27-eureka-0.0.1-SNAPSHOT.jar ./.cicd
+
+// workspace/target/i27-eureka-0.0.1-SNAPSHOT-jar
+
+// i27devopsb2/eureka:tag
